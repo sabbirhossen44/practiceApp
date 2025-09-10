@@ -7,8 +7,23 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(){
-        $categories = Category::latest()->get();
+    public function index(Request $request){
+        $search = $request->search;
+        $filter = $request->filter;
+        $type = '';
+        if($filter == 1){
+            $type = 'ASC';
+        }else if($filter == 2){
+            $type = 'DESC';
+        }
+
+        $categories = Category::when($search, function($query, $search){
+            return $query->where('name', 'like', "%{$search}%");
+        })->orWhere('slug', 'like', "%{$search}%")
+        ->when($filter !== null && $filter !== '', function($query, $filter) use ($type){
+            return $query->orderBy('name', $type);
+        })
+        ->latest()->paginate(10);
         return view('category.index', compact('categories'));
     }
     public function create(){
@@ -17,7 +32,6 @@ class CategoryController extends Controller
     public function store(Request $request){
         $request->validate([
             'name' => 'required',
-            'slug' => 'required'
         ]);
 
         Category::create([
@@ -25,6 +39,11 @@ class CategoryController extends Controller
             'slug' => $request->slug
         ]);
 
-        return to_route('categories.index');
+        return to_route('categories.index')->withSuccess('Category created successfully');
+    }
+
+    public function delete(Category $category){
+        $category->delete();
+        return to_route('categories.index')->withSuccess('Category deleted successfully');
     }
 }

@@ -17,13 +17,6 @@
                                 <strong class="text-danger">{{ $message }}</strong>
                             @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="slug" class="form-label">Slug</label>
-                            <input type="text" name="slug" class="form-control" id="slug">
-                            @error('slug')
-                                <strong class="text-danger">{{ $message }}</strong>
-                            @enderror
-                        </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>

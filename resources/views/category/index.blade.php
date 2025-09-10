@@ -8,7 +8,35 @@
                     <a href="{{ route('categories.create') }}" class="btn btn-primary">Add Category</a>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered" id="myTable">
+                    <div class="mt-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <form action="">
+                                    <div class="input-group mb-3">
+                                        <input type="text" name="search" class="form-control" placeholder="Search"
+                                            value="{{ request('search') }}">
+                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    </div>
+                                </form>
+                            </div>
+                            {{-- <div class="col-md-4"></div> --}}
+                            <div class="col-md-8">
+                                <form action="">
+                                    <div class="d-flex justify-content-end align-items-center ms-auto">
+                                        <select name="filter" class="form-select" id="" style="max-width: 350px">
+                                            <option value="">Select Filter</option>
+                                            <option value="1" {{ request('filter') == '1' ? 'selected' : '' }}>A to Z</option>
+                                            <option value="2" {{ request('filter') == '2' ? 'selected' : '' }}>Z to A</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
                                 <th>SL</th>
@@ -21,13 +49,14 @@
                         <tbody>
                             @forelse ($categories as $index => $category)
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $categories->firstItem() + $index }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->slug }}</td>
                                     <td>{{ $category->created_at->diffForHumans() }}</td>
                                     <td>
                                         <a href="" class="btn btn-info">Edit</a>
-                                        <a href="" class="btn btn-danger">Delete</a>
+                                        <a href="{{ route('categories.delete', $category->id) }}"
+                                            class="btn btn-danger deleteConfirm">Delete</a>
                                     </td>
                                 </tr>
                             @empty
@@ -37,15 +66,11 @@
                             @endforelse
                         </tbody>
                     </table>
+                    {{ $categories->links() }}
                 </div>
             </div>
         </div>
     </div>
 @endsection
 @section('script')
-    <script>
-        $(document).ready(function() {
-            $('#myTable').DataTable();
-        });
-    </script>
 @endsection
